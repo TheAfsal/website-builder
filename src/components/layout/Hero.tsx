@@ -2,12 +2,14 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sparkles, Zap, Palette, Code } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface HeroProps {
   onCreateClick: () => void;
 }
 
 export default function Hero({ onCreateClick }: HeroProps) {
+  const navigation = useNavigate();
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background Elements */}
@@ -61,6 +63,7 @@ export default function Hero({ onCreateClick }: HeroProps) {
               variant="outline"
               size="lg"
               className="border-2 border-slate-300 hover:border-violet-300 px-8 py-4 text-lg font-semibold bg-transparent"
+              onClick={() => navigation(("/template"))}
             >
               View Templates
             </Button>

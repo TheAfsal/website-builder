@@ -52,13 +52,13 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="#home"
+              href="/"
               className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
             >
               Home
             </a>
             <a
-              href="#templates"
+              href="/template"
               className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
             >
               Templates

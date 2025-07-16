@@ -8,6 +8,7 @@ import PastWebsites from "@/components/layout/PastWebsite"
 import Testimonials from "@/components/layout/Testimonials"
 import Footer from "@/components/layout/Footer"
 import AIPopup from "@/components/AIPopup"
+import { useNavigate } from "react-router-dom"
 
 interface Website {
   id: number
@@ -19,6 +20,7 @@ interface Website {
 
 export default function HomePage() {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false)
+  const navigate = useNavigate()
 
   const pastWebsites: Website[] = [
     {
@@ -46,11 +48,11 @@ export default function HomePage() {
 
   const handleGenerate = (generatedHtml: string) => {
     setIsPopupOpen(false)
-    console.log("Generated HTML:", generatedHtml)
+    navigate("/editor", { state: { generatedHtml } });
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen">
       <Navigation />
 
       <motion.main initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>

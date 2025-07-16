@@ -1,10 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './components/HomePage';
-import EditorPage from './components/EditorPage';
-import ErrorBoundary from './components/ErrorBoundary';
-import './App.css';
-import K from './components/K';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import HomePage from "./components/HomePage";
+import EditorPage from "./components/EditorPage";
+import ErrorBoundary from "./components/ErrorBoundary";
+import "./App.css";
+import K from "./components/K";
+import TemplatePage from "./components/TemplatePage";
 
 const App: React.FC = () => {
   return (
@@ -17,6 +18,14 @@ const App: React.FC = () => {
             element={
               <ErrorBoundary>
                 <EditorPage />
+              </ErrorBoundary>
+            }
+          />
+          <Route
+            path="/template"
+            element={
+              <ErrorBoundary>
+                <TemplatePage />
               </ErrorBoundary>
             }
           />

@@ -4,6 +4,7 @@ import StudioEditor from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/style";
 import type { Editor, Project } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import Navigation from "./layout/NavigationBar";
 
 // Call Gemini API
 const callGemini = async (
