@@ -1,15 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Zap, Palette, Code, ListEnd } from "lucide-react";
+import { Sparkles, Zap, Palette, Code } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeroProps {
   onCreateClick: () => void;
-  openLatest: () => void;
 }
 
-export default function Hero({ onCreateClick, openLatest }: HeroProps) {
+export default function Hero({ onCreateClick }: HeroProps) {
   const navigate = useNavigate();
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
@@ -74,14 +73,6 @@ export default function Hero({ onCreateClick, openLatest }: HeroProps) {
 
             {/* Second Row */}
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:justify-center items-center">
-              <Button
-                size="lg"
-                className="w-full sm:w-auto border-2 border-slate-300 hover:border-violet-300 px-8 py-4 text-lg font-semibold bg-transparent"
-                onClick={openLatest}
-              >
-                <ListEnd className="w-5 h-5 mr-2" />
-                Open last project
-              </Button>
               <Button
                 variant="outline"
                 className="w-full sm:w-auto bg-gradient-to-r from-violet-600 bg-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-300"

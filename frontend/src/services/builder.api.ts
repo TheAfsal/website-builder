@@ -63,7 +63,7 @@ export const generateWebsite = async ({
   requirements: string;
 }) => {
   try {
-    const res = await api.post("/generate-website", {
+    const res = await api.post("/generate/website", {
       websiteType,
       theme,
       language,

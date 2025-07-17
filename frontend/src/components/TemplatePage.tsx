@@ -171,9 +171,10 @@ export default function TemplatePage() {
 
   const handleTemplateClick = (content: string) => {
     console.log(content);
+    const projectId = crypto.randomUUID()
 
-    navigate("/editor", {
-      state: { generatedHtml: content, projectId: crypto.randomUUID() },
+    navigate(`/editor/${projectId}`, {
+      state: { generatedHtml: content  },
     });
   };
 

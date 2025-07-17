@@ -41,12 +41,7 @@ export default function HomePage() {
       state: { generatedHtml },
     });
   };
-
-  const openLatest = () => {
-    setIsPopupOpen(false);
-    navigate("/editor");
-  };
-
+  
   return (
     <div className="min-h-screen">
       <motion.main
@@ -56,7 +51,6 @@ export default function HomePage() {
       >
         <Hero
           onCreateClick={() => setIsPopupOpen(true)}
-          openLatest={openLatest}
         />
 
         <PastWebsites websites={projects} />
