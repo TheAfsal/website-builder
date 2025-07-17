@@ -280,8 +280,11 @@ const EditorPage: React.FC = () => {
                   },
                 };
               },
+              identity: {
+                id: "UNIQUE_END_USER_ID",
+              },
             },
-            project: { type: "web" },
+            project: { type: "web", id: "UNIQUE_PROJECT_ID" },
             layout: {
               default: {
                 type: "column",
