@@ -2,15 +2,8 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import Navigation from "@/components/layout/NavigationBar";
 import Footer from "@/components/layout/Footer";
-import {
-  Eye,
-  Sparkles,
-  ArrowRight,
-  Star,
-  Heart
-} from "lucide-react";
+import { Eye, Sparkles, ArrowRight, Star, Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface Template {
@@ -178,14 +171,14 @@ export default function TemplatePage() {
 
   const handleTemplateClick = (content: string) => {
     console.log(content);
-    
-    navigate('/editor', { state: { generatedHtml: content } });
+
+    navigate("/editor", {
+      state: { generatedHtml: content, projectId: crypto.randomUUID() },
+    });
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-      <Navigation />
-
       <main className="pt-24">
         {/* Hero Section */}
         <section className="py-20 bg-gradient-to-br from-violet-50 via-white to-purple-50">

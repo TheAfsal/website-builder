@@ -1,9 +1,11 @@
 import React, { useRef, useState } from "react";
-// import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import StudioEditor from "@grapesjs/studio-sdk/react";
-import "@grapesjs/studio-sdk/react";
-import type { Editor } from "../types";
+import "@grapesjs/studio-sdk/style";
+import type { Editor, Project } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { loadProject, saveProject } from "@/services/builder.api";
+import getOrCreateProjectId from "@/utils/createProjectIs";
 
 // Call Gemini API
 const callGemini = async (
@@ -74,47 +76,39 @@ const callGemini = async (
   }
 };
 
-// const PROJECT_ID = "DEMO_PROJECT_ID_EXPORT";
-
-// const saveToSessionStorage = async (projectId: string, project: Project) => {
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-//   sessionStorage.setItem(projectId, JSON.stringify(project));
-// };
-
-// const loadFromSessionStorage = async (
-//   projectId: string
-// ): Promise<Project | null> => {
-//   await new Promise((resolve) => setTimeout(resolve, 1000));
-//   const projectString = sessionStorage.getItem(projectId);
-//   return projectString ? JSON.parse(projectString) : null;
-// };
-
 const EditorPage: React.FC = () => {
   const editorRef = useRef<Editor | null>(null);
   const inputTextRef = useRef("");
   const [textareaValue, setTextareaValue] = useState("");
+  const { id } = useParams();
 
-  // const location = useLocation();
-  // const {
-  //   generatedHtml,
-  //   // websiteType = "basic",
-  //   // language = "English",
-  //   // theme = "modern",
-  //   // requirements = "basic structure",
-  // } = location.state || { generatedHtml: "<h1>New project</h1>" };
+  const location = useLocation();
+  const {
+    generatedHtml,
+    projectId,
+  } = location.state || { generatedHtml: "<h1>New project</h1>" };
 
-  // const mapComponentTypeToTag = (type: string): string => {
-  //   const map: Record<string, string> = {
-  //     navbar: "nav",
-  //     hero: "section",
-  //     "product-grid": "div",
-  //     testimonials: "section",
-  //     footer: "footer",
-  //     image: "img",
-  //     video: "video",
-  //   };
-  //   return map[type] || "div";
-  // };
+  const PROJECT_ID = id || projectId || getOrCreateProjectId();
+
+  console.log(PROJECT_ID);
+
+  const saveToSessionStorage = async (projectId: any, project: any) => {
+    try {
+      return await saveProject(projectId, project);
+    } catch (error) {
+      console.error("Failed to save project:", error);
+    }
+  };
+
+  const loadFromSessionStorage = async (projectId: any) => {
+    if (projectId) {
+      try {
+        return await loadProject(projectId);
+      } catch (error) {
+        console.error("Failed to save project:", error);
+      }
+    }
+  };
 
   const handleGenerate = async (textareaValue: string) => {
     const editor = editorRef.current;
@@ -263,24 +257,26 @@ const EditorPage: React.FC = () => {
           id="gjs-editor"
           style={{ height: "100%", width: "100%" }}
           options={{
-            licenseKey:
-              "0779246a177f4f8c8e5dafb6f3a967028d4e5c974361480cbbf143e340ada0df",
-            project: {
-              type: "web",
-              // TODO: replace with a unique id for your projects. e.g. an uuid
-              id: "UNIQUE_PROJECT_ID",
-            },
-            identity: {
-              // TODO: replace with a unique id for your end users. e.g. an uuid
-              id: "UNIQUE_END_USER_ID",
-            },
-            assets: {
-              storageType: "cloud",
-            },
             storage: {
-              type: "cloud",
-              autosaveChanges: 100,
-              autosaveIntervalMs: 10000,
+              type: "self",
+              autosaveChanges: 5,
+              onSave: async ({
+                project,
+              }: {
+                project: Project;
+                editor: Editor;
+              }) => {
+                await saveToSessionStorage(PROJECT_ID, project);
+                console.log("Project saved", { project });
+              },
+              onLoad: async () => {
+                const project = await loadFromSessionStorage(PROJECT_ID);
+                return {
+                  project: project || {
+                    pages: [{ name: "Home", component: generatedHtml }],
+                  },
+                };
+              },
             },
             layout: {
               default: {

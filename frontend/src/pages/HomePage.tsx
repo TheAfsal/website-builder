@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Hero from "@/components/layout/Hero";
 import PastWebsites from "@/components/layout/PastWebsite";
@@ -6,42 +6,31 @@ import Testimonials from "@/components/layout/Testimonials";
 import Footer from "@/components/layout/Footer";
 import AIPopup from "@/components/AIPopup";
 import { useNavigate } from "react-router-dom";
-
-interface Website {
-  id: number;
-  title: string;
-  date: string;
-  env: string;
-  image: string;
-}
+import { getMyProjects } from "@/services/builder.api";
 
 export default function HomePage() {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [projects, setProjects] = useState([]);
 
-  const pastWebsites: Website[] = [
-    {
-      id: 1,
-      title: "E-commerce Store",
-      date: "2025-06-20",
-      env: "PROD",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: 2,
-      title: "Personal Blog",
-      date: "2025-05-15",
-      env: "STAGE",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-    {
-      id: 3,
-      title: "Portfolio",
-      date: "2025-04-10",
-      env: "PROD",
-      image: "/placeholder.svg?height=200&width=300",
-    },
-  ];
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const data = await getMyProjects();
+      const formatted = data.map((proj: any, idx: number) => ({
+        id: idx,
+        projectId: proj.projectId,
+        title: proj?.data?.title || `Project ${idx + 1}`,
+        date: proj.updatedAt || new Date().toISOString(),
+        env: proj.data?.env || "STAGING",
+        image:
+          proj.data?.screenshot ||
+          "https://source.unsplash.com/random/400x200?web",
+      }));
+      setProjects(formatted);
+    };
+
+    fetchProjects();
+  }, []);
 
   const handleGenerate = (generatedHtml: string) => {
     localStorage.clear();
@@ -62,9 +51,12 @@ export default function HomePage() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
       >
-        <Hero onCreateClick={() => setIsPopupOpen(true)} openLatest={openLatest} />
+        <Hero
+          onCreateClick={() => setIsPopupOpen(true)}
+          openLatest={openLatest}
+        />
 
-        <PastWebsites websites={pastWebsites} />
+        <PastWebsites websites={projects} />
 
         <Testimonials />
       </motion.main>

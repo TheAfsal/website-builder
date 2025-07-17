@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -10,11 +8,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Sparkles, User, Settings, LogOut } from "lucide-react";
+import { Menu, X, Sparkles, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { logout } from "@/store/slices/authSlice";
+import { logoutUser } from "@/services/user.api";
+import { useDispatch } from "react-redux";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,6 +27,12 @@ export default function Navigation() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleLogout = async () => {
+    await logoutUser();
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
     <motion.nav
@@ -52,14 +62,14 @@ export default function Navigation() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="/"
-              className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
+              onClick={() => navigate("/")}
+              className="text-slate-700 hover:text-violet-600 transition-colors font-medium cursor-pointer"
             >
               Home
             </a>
             <a
-              href="/template"
-              className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
+              onClick={() => navigate("/template")}
+              className="text-slate-700 hover:text-violet-600 transition-colors font-medium cursor-pointer"
             >
               Templates
             </a>
@@ -96,20 +106,11 @@ export default function Navigation() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <div className="flex flex-col space-y-1 p-2">
-                  <p className="text-sm font-medium leading-none">John Doe</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    john.doe@example.com
+                  <p className="text-sm font-medium leading-none">
+                    Account Info
                   </p>
                 </div>
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Log out</span>
                 </DropdownMenuItem>
@@ -138,13 +139,13 @@ export default function Navigation() {
           >
             <div className="flex flex-col space-y-4 pt-4">
               <a
-                href="#home"
+                href="/"
                 className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
               >
                 Home
               </a>
               <a
-                href="#templates"
+                href="/template"
                 className="text-slate-700 hover:text-violet-600 transition-colors font-medium"
               >
                 Templates

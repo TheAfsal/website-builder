@@ -1,4 +1,3 @@
-"use client";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,9 +9,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 interface Website {
   id: number;
+  projectId: number;
   title: string;
   date: string;
   env: string;
@@ -24,6 +25,9 @@ interface PastWebsitesProps {
 }
 
 export default function PastWebsites({ websites }: PastWebsitesProps) {
+  console.log(websites);
+
+  const navigate = useNavigate();
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -70,7 +74,9 @@ export default function PastWebsites({ websites }: PastWebsitesProps) {
               <Card className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-white to-slate-50 overflow-hidden">
                 <div className="relative">
                   <img
-                    src={"https://static.vecteezy.com/system/resources/thumbnails/004/584/973/small_2x/colorful-splash-abstract-background-design-free-vector.jpg"}
+                    src={
+                      "https://static.vecteezy.com/system/resources/thumbnails/004/584/973/small_2x/colorful-splash-abstract-background-design-free-vector.jpg"
+                    }
                     alt={website.title}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -128,6 +134,9 @@ export default function PastWebsites({ websites }: PastWebsitesProps) {
                       variant="outline"
                       size="sm"
                       className="flex-1 hover:bg-violet-50 hover:border-violet-300 bg-transparent"
+                      onClick={() => {
+                        navigate(`/editor/${website.projectId}`);
+                      }}
                     >
                       <Edit className="w-4 h-4 mr-2" />
                       Edit
@@ -136,6 +145,9 @@ export default function PastWebsites({ websites }: PastWebsitesProps) {
                       variant="outline"
                       size="sm"
                       className="flex-1 hover:bg-violet-50 hover:border-violet-300 bg-transparent"
+                      onClick={() => {
+                        navigate(`/editor/${website.projectId}`);
+                      }}
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
                       View
