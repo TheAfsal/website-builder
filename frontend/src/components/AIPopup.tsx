@@ -12,17 +12,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X, Sparkles, Palette, Globe, Sun, Moon, Minimize } from "lucide-react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { generateWebsite } from "@/services/builder.api";
 
 interface AIPopupProps {
   onClose: () => void;
   onGenerate: (html: string) => void;
 }
-
-const genAI = new GoogleGenerativeAI(
-  import.meta.env.VITE_GOOGLE_API_KEY || "YOUR_API_KEY"
-);
 
 export default function AIPopup({ onClose, onGenerate }: AIPopupProps) {
   const [requirements, setRequirements] = useState<string>("");
