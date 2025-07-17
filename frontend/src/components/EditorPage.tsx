@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/react";
-import type { Editor, Project } from "../types";
+import type { Editor } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Call Gemini API
@@ -74,34 +74,34 @@ const callGemini = async (
   }
 };
 
-const PROJECT_ID = "DEMO_PROJECT_ID_EXPORT";
+// const PROJECT_ID = "DEMO_PROJECT_ID_EXPORT";
 
-const saveToSessionStorage = async (projectId: string, project: Project) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  sessionStorage.setItem(projectId, JSON.stringify(project));
-};
+// const saveToSessionStorage = async (projectId: string, project: Project) => {
+//   await new Promise((resolve) => setTimeout(resolve, 1000));
+//   sessionStorage.setItem(projectId, JSON.stringify(project));
+// };
 
-const loadFromSessionStorage = async (
-  projectId: string
-): Promise<Project | null> => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const projectString = sessionStorage.getItem(projectId);
-  return projectString ? JSON.parse(projectString) : null;
-};
+// const loadFromSessionStorage = async (
+//   projectId: string
+// ): Promise<Project | null> => {
+//   await new Promise((resolve) => setTimeout(resolve, 1000));
+//   const projectString = sessionStorage.getItem(projectId);
+//   return projectString ? JSON.parse(projectString) : null;
+// };
 
 const EditorPage: React.FC = () => {
   const editorRef = useRef<Editor | null>(null);
   const inputTextRef = useRef("");
   const [textareaValue, setTextareaValue] = useState("");
 
-  const location = useLocation();
-  const {
-    generatedHtml,
-    // websiteType = "basic",
-    // language = "English",
-    // theme = "modern",
-    // requirements = "basic structure",
-  } = location.state || { generatedHtml: "<h1>New project</h1>" };
+  // const location = useLocation();
+  // const {
+  //   generatedHtml,
+  //   // websiteType = "basic",
+  //   // language = "English",
+  //   // theme = "modern",
+  //   // requirements = "basic structure",
+  // } = location.state || { generatedHtml: "<h1>New project</h1>" };
 
   // const mapComponentTypeToTag = (type: string): string => {
   //   const map: Record<string, string> = {
