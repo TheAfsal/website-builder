@@ -147,7 +147,7 @@ const EditorPage: React.FC = () => {
           let { selector, style } = response.payload;
           const editor = editorRef.current;
 
-          const wrapper =  editor ? editor.getWrapper() : null;
+          const wrapper = editor ? editor.getWrapper() : null;
           //@ts-ignore
           const wrapperId = wrapper?.getId?.();
 
@@ -265,12 +265,7 @@ const EditorPage: React.FC = () => {
             storage: {
               type: "self",
               autosaveChanges: 5,
-              onSave: async ({
-                project,
-              }: {
-                project: Project;
-                editor: Editor;
-              }) => {
+              onSave: async (project: any) => {
                 await saveToSessionStorage(PROJECT_ID, project);
                 console.log("Project saved", { project });
               },
