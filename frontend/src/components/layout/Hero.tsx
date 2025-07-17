@@ -1,15 +1,16 @@
 "use client";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, Zap, Palette, Code } from "lucide-react";
+import { Sparkles, Zap, Palette, Code, ListEnd } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface HeroProps {
   onCreateClick: () => void;
+  openLatest: () => void;
 }
 
-export default function Hero({ onCreateClick }: HeroProps) {
-  const navigation = useNavigate();
+export default function Hero({ onCreateClick, openLatest }: HeroProps) {
+  const navigate = useNavigate();
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background Elements */}
@@ -49,24 +50,51 @@ export default function Hero({ onCreateClick }: HeroProps) {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+            className="flex flex-col gap-6 justify-center items-center mb-16"
           >
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-violet-600 bg-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-300"
-              onClick={onCreateClick}
-            >
-              <Sparkles className="w-5 h-5 mr-2" />
-              Create with AI
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-2 border-slate-300 hover:border-violet-300 px-8 py-4 text-lg font-semibold bg-transparent"
-              onClick={() => navigation(("/template"))}
-            >
-              View Templates
-            </Button>
+            {/* First Row */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:justify-center items-center">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-gradient-to-r from-violet-600 bg-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-300"
+                onClick={onCreateClick}
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Create with AI
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                className="w-full sm:w-auto border-2 border-slate-300 hover:border-violet-300 px-8 py-4 text-lg font-semibold bg-transparent"
+                onClick={() => navigate("/template")}
+              >
+                View Templates
+              </Button>
+            </div>
+
+            {/* Second Row */}
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:justify-center items-center">
+              <Button
+                size="lg"
+                className="w-full sm:w-auto border-2 border-slate-300 hover:border-violet-300 px-8 py-4 text-lg font-semibold bg-transparent"
+                onClick={openLatest}
+              >
+                <ListEnd className="w-5 h-5 mr-2" />
+                Open last project
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto bg-gradient-to-r from-violet-600 bg-purple-600 hover:from-violet-700 hover:to-purple-700 text-white transition-all duration-300"
+                size="lg"
+                onClick={() => {
+                  localStorage.clear();
+                  sessionStorage.clear();
+                  navigate("/editor");
+                }}
+              >
+                Start from Scratch
+              </Button>
+            </div>
           </motion.div>
 
           {/* Feature Icons */}

@@ -4,13 +4,15 @@ import HomePage from "./components/HomePage";
 import EditorPage from "./components/EditorPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import "./App.css";
-import K from "./components/K";
 import TemplatePage from "./components/TemplatePage";
+import Navigation from "./components/layout/NavigationBar";
 
 const App: React.FC = () => {
   return (
     <Router>
       <div className="min-h-screen bg-gray-100">
+        <Navigation /> 
+
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -26,14 +28,6 @@ const App: React.FC = () => {
             element={
               <ErrorBoundary>
                 <TemplatePage />
-              </ErrorBoundary>
-            }
-          />
-          <Route
-            path="/k"
-            element={
-              <ErrorBoundary>
-                <K />
               </ErrorBoundary>
             }
           />

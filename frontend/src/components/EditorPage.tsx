@@ -4,7 +4,6 @@ import StudioEditor from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/style";
 import type { Editor, Project } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import Navigation from "./layout/NavigationBar";
 
 // Call Gemini API
 const callGemini = async (
@@ -16,13 +15,9 @@ const callGemini = async (
     console.log(selectedHtml);
     const match = selectedHtml.match(/id=["']([\w-]+)["']/);
     const id = match ? match[1] : null;
-    console.log("Extracted ID:", id);
 
-    // const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+    const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY);
 
-    const genAI = new GoogleGenerativeAI(
-      "AIzaSyDvF7rlh8Pe6CEpCC0iy8QfZVD2WT_aM1o"
-    );
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
@@ -70,7 +65,6 @@ const callGemini = async (
     const response = await result.response;
     const text = response.text();
 
-    // Strip markdown code blocks if present
     const cleanedText = text.replace(/```json|```/g, "").trim();
 
     return JSON.parse(cleanedText);
@@ -132,7 +126,13 @@ const EditorPage: React.FC = () => {
       return;
     }
 
-    const id = selected.getId(); // example: "igol"
+    const button = document.getElementById("btn-generate") as HTMLButtonElement;
+    if (button) {
+      button.disabled = true;
+      button.innerText = "Generating...";
+    }
+
+    const id = selected.getId();
     console.log("Component ID:", id);
 
     const selectedHtml = selected.toHTML();
@@ -217,6 +217,11 @@ const EditorPage: React.FC = () => {
       }
     } catch (err) {
       console.error("AI command failed:", err);
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.innerText = "Generate";
+      }
     }
   };
 
@@ -229,158 +234,177 @@ const EditorPage: React.FC = () => {
     <div
       style={{
         height: "100vh",
-        width: "100%",
-        maxWidth: "100%",
-        margin: 0,
-        padding: 0,
+        width: "100vw",
         overflow: "hidden",
         display: "flex",
+        flexDirection: "column",
       }}
     >
-      <StudioEditor
-        onEditor={handleEditorInit}
-        id="gjs-editor"
-        style={{ height: "100%", width: "100%" }}
-        options={{
-          storage: {
-            type: "self",
-            autosaveChanges: 5,
-            onSave: async ({
-              project,
-            }: {
-              project: Project;
-              editor: Editor;
-            }) => {
-              await saveToSessionStorage(PROJECT_ID, project);
-              console.log("Project saved", { project });
-            },
-            onLoad: async () => {
-              const project = await loadFromSessionStorage(PROJECT_ID);
-              return {
-                project: project || {
-                  pages: [{ name: "Home", component: generatedHtml }],
-                },
-              };
-            },
-          },
-          project: { type: "web" },
-          layout: {
-            default: {
-              type: "column",
-              style: {
-                height: "100%",
-                width: "100%",
-                display: "flex",
-                margin: 0,
-                padding: 0,
-              },
-              children: [
-                {
-                  type: "sidebarTop",
-                  style: {
-                    height: "50px",
-                    padding: "10px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderBottom: "1px solid #444",
-                  },
-                  children: [
-                    {
-                      type: "devices",
-                      style: { width: "150px" },
-                    },
-                    {
-                      type: "button",
-                      label: "Preview",
-                      variant: "outline",
-                      style: {
-                        borderColor: "white",
-                        color: "white",
-                        marginLeft: "10px",
-                      },
-                      onClick: ({ editor }) =>
-                        editor.runCommand("core:preview"),
-                    },
-                  ],
-                },
-                {
-                  type: "row",
-                  style: {
-                    flexGrow: 1,
-                    display: "flex",
-                    margin: 0,
-                    padding: 0,
-                  },
-                  children: [
-                    {
-                      type: "sidebarLeft",
-                    },
-                    {
-                      type: "canvasSidebarTop",
-                    },
-                    {
-                      type: "sidebarRight",
-                      style: {
-                        width: "250px",
-                        minWidth: "200px",
-                        maxWidth: "300px",
-                        padding: "10px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "10px",
-                      },
-                      children: [
-                        {
-                          type: "inputField",
-                          id: "ai-sidebar-textarea",
-                          name: "sidebarTextarea",
-                          placeholder:
-                            "Enter text (e.g., 'Change background color to blue')",
-                          value: textareaValue,
-                          style: {
-                            fontSize: "14px",
-                            padding: "8px",
-                            minHeight: "100px",
-                            width: "100%",
-                          },
-                          onChange: ({ value, setState }) => {
-                            setTextareaValue(value);
-                            inputTextRef.current = value;
-                            setState({ value });
-                          },
-                        },
-                        {
-                          type: "button",
-                          label: "Generate",
-                          variant: "primary",
-                          onClick: () => handleGenerate(inputTextRef.current),
-                        },
-                        {
-                          type: "panelStyles",
-                          header: { label: "Styles" },
-                          style: { padding: "10px" },
-                        },
-                        {
-                          type: "panelProperties",
-                          header: { label: "Properties" },
-                          style: { padding: "10px" },
-                        },
-                        {
-                          type: "panelAssets",
-                          header: { label: "Assets" },
-                          style: { padding: "10px" },
-                          content: { itemsPerRow: 2 },
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          },
+      <div
+        style={{
+          height: "60px",
+          backgroundColor: "#282829",
+          color: "white",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 20px",
         }}
-      />
+      ></div>
+
+      <div style={{ flexGrow: 1, overflow: "hidden" }}>
+        <StudioEditor
+          onEditor={handleEditorInit}
+          id="gjs-editor"
+          style={{ height: "100%", width: "100%" }}
+          options={{
+            storage: {
+              type: "self",
+              autosaveChanges: 5,
+              onSave: async ({
+                project,
+              }: {
+                project: Project;
+                editor: Editor;
+              }) => {
+                await saveToSessionStorage(PROJECT_ID, project);
+                console.log("Project saved", { project });
+              },
+              onLoad: async () => {
+                const project = await loadFromSessionStorage(PROJECT_ID);
+                return {
+                  project: project || {
+                    pages: [{ name: "Home", component: generatedHtml }],
+                  },
+                };
+              },
+            },
+            project: { type: "web" },
+            layout: {
+              default: {
+                type: "column",
+                style: {
+                  height: "100%",
+                  width: "100%",
+                  display: "flex",
+                  margin: 0,
+                  padding: 0,
+                },
+                children: [
+                  {
+                    type: "sidebarTop",
+                    style: {
+                      height: "50px",
+                      padding: "10px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderBottom: "1px solid #444",
+                    },
+                    children: [
+                      {
+                        type: "devices",
+                        style: { width: "150px" },
+                      },
+                      {
+                        type: "button",
+                        label: "Preview",
+                        variant: "outline",
+                        style: {
+                          borderColor: "white",
+                          color: "white",
+                          marginLeft: "10px",
+                        },
+                        onClick: ({ editor }) =>
+                          editor.runCommand("core:preview"),
+                      },
+                    ],
+                  },
+                  {
+                    type: "row",
+                    style: {
+                      flexGrow: 1,
+                      display: "flex",
+                      margin: 0,
+                      padding: 0,
+                      overflow: "hidden",
+                    },
+
+                    children: [
+                      {
+                        type: "sidebarLeft",
+                      },
+                      {
+                        type: "canvasSidebarTop",
+                        style: {
+                          flexGrow: 1,
+                          overflow: "auto",
+                        },
+                      },
+                      {
+                        type: "sidebarRight",
+                        style: {
+                          width: "250px",
+                          minWidth: "200px",
+                          maxWidth: "300px",
+                          padding: "10px",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "10px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
+                          maxHeight: "100%",
+                        },
+                        children: [
+                          {
+                            type: "text",
+                            content: "Generate Using AI",
+                          },
+                          {
+                            type: "inputField",
+                            id: "ai-sidebar-textarea",
+                            name: "sidebarTextarea",
+                            placeholder:
+                              "Enter text (e.g., 'Change background color to blue')",
+                            value: textareaValue,
+                            onChange: ({ value, setState }) => {
+                              setTextareaValue(value);
+                              inputTextRef.current = value;
+                              setState({ value });
+                            },
+                          },
+                          {
+                            type: "button",
+                            label: "Generate",
+                            variant: "primary",
+                            id: "btn-generate",
+                            onClick: () => handleGenerate(inputTextRef.current),
+                          },
+                          {
+                            type: "panelStyles",
+                            header: { label: "Styles" },
+                            style: { padding: "10px" },
+                          },
+                          {
+                            type: "panelProperties",
+                            header: { label: "Properties" },
+                            style: { padding: "10px" },
+                          },
+                          {
+                            type: "panelAssets",
+                            header: { label: "Assets" },
+                            style: { padding: "10px" },
+                            content: { itemsPerRow: 2 },
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            },
+          }}
+        />
+      </div>
     </div>
   );
 };
