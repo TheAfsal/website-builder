@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import StudioEditor from "@grapesjs/studio-sdk/react";
 import "@grapesjs/studio-sdk/style";
-import type { Editor, Project } from "../types";
+import type { Editor } from "../types";
 import { callGemini, loadProject, saveProject } from "@/services/builder.api";
 import getOrCreateProjectId from "@/utils/createProjectIs";
 
@@ -260,15 +260,11 @@ const EditorPage: React.FC = () => {
             storage: {
               type: "self",
               autosaveChanges: 5,
-              onSave: async ({
-                project,
-              }: {
-                project: Project;
-                editor: Editor;
-              }) => {
+              onSave: async (props:any) => {
+                const { project } = props;
                 await saveToSessionStorage(PROJECT_ID, project);
                 console.log("Project saved", { project });
-              },
+              },              
               onLoad: async () => {
                 const project = await loadFromSessionStorage(PROJECT_ID);
                 return {
