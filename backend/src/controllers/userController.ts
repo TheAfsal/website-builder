@@ -8,8 +8,8 @@ export const registerUser = async (req: Request, res: Response) => {
     const { user, token } = await userService.registerUser(email, password);
     res.cookie("builder-id", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: process.env.DEV === "production",
+      sameSite: process.env.DEV === "production" ? "none" : "strict",
       maxAge: 3600000,
     });
     res.status(201).json({ user, token });
@@ -25,8 +25,8 @@ export const loginUser = async (req: Request, res: Response) => {
     const { user, token } = await userService.loginUser(email, password);
     res.cookie("builder-id", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      secure: process.env.DEV === "production",
+      sameSite: process.env.DEV === "production" ? "none" : "strict",
       maxAge: 3600000,
     });
     res.status(200).json({ user, token });
@@ -49,8 +49,8 @@ export const verifyToken = async (req: AuthRequest, res: Response) => {
 export const logoutUser = (req: Request, res: Response) => {
   res.clearCookie("builder-id", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+    secure: process.env.DEV === "production",
+    sameSite: process.env.DEV === "production" ? "none" : "strict",
   });
   res.status(200).json({ message: "Logged out successfully" });
 };
