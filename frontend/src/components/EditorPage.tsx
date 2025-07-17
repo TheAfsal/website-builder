@@ -145,7 +145,7 @@ const EditorPage: React.FC = () => {
       switch (response.action) {
         case "updateStyle": {
           let { selector } = response.payload;
-          const { style  } = response.payload;
+          const { style } = response.payload;
           const editor = editorRef.current;
 
           const wrapper = editor ? editor.getWrapper() : null;
@@ -263,8 +263,10 @@ const EditorPage: React.FC = () => {
           id="gjs-editor"
           style={{ height: "100%", width: "100%" }}
           options={{
+            licenseKey:
+              "0779246a177f4f8c8e5dafb6f3a967028d4e5c974361480cbbf143e340ada0df",
             storage: {
-              type: "self",
+              type: "cloud",
               autosaveChanges: 5,
               onSave: async (project: any) => {
                 await saveToSessionStorage(PROJECT_ID, project);
