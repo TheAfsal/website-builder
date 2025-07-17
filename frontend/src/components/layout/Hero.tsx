@@ -80,7 +80,8 @@ export default function Hero({ onCreateClick }: HeroProps) {
                 onClick={() => {
                   localStorage.clear();
                   sessionStorage.clear();
-                  navigate("/editor");
+                  const projectId = crypto.randomUUID();
+                  navigate(`/editor/${projectId}`);
                 }}
               >
                 Start from Scratch
