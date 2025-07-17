@@ -3,11 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import { connectDB } from './config/database.ts';
-import { authMiddleware } from './middlewares/auth.ts';
-import userRoutes from './routes/userRoutes.ts';
-import projectRoutes from './routes/projectRoutes.ts';
-import generateRoutes from './routes/generateRoutes.ts';
+import { connectDB } from './config/database';
+import { authMiddleware } from './middlewares/auth';
+import userRoutes from './routes/userRoutes';
+import projectRoutes from './routes/projectRoutes';
+import generateRoutes from './routes/generateRoutes';
 
 dotenv.config();
 

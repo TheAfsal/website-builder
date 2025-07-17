@@ -1,5 +1,5 @@
 import express from 'express';
-import * as generateController from '../controllers/generateController.ts';
+import * as generateController from '../controllers/generateController';
 
 const router = express.Router();
 

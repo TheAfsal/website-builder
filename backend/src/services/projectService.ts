@@ -1,4 +1,4 @@
-import Project from '../models/project.ts';
+import Project from '../models/project';
 import mongoose from 'mongoose';
 
 export const saveProject = async (projectId: string, userId: string, data: object) => {

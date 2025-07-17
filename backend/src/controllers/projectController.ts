@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import * as projectService from '../services/projectService.ts';
+import * as projectService from '../services/projectService';
 import type { AuthRequest } from '../types/index.ts';
 
 export const saveProject = async (req: AuthRequest, res: Response) => {

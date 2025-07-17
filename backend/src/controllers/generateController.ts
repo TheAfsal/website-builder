@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import * as generateService from "../services/generateService.ts";
+import * as generateService from "../services/generateService";
 
 export const generateContent = async (req: Request, res: Response) => {
   try {
