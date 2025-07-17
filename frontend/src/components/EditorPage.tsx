@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import StudioEditor from "@grapesjs/studio-sdk/react";
-import "@grapesjs/studio-sdk/style";
+import "@grapesjs/studio-sdk/react";
 import type { Editor, Project } from "../types";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -13,8 +13,8 @@ const callGemini = async (
   try {
     console.log("@@@", inputText);
     console.log(selectedHtml);
-    const match = selectedHtml.match(/id=["']([\w-]+)["']/);
-    const id = match ? match[1] : null;
+    // const match = selectedHtml.match(/id=["']([\w-]+)["']/);
+    // const id = match ? match[1] : null;
 
     const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GOOGLE_API_KEY);
 
@@ -97,24 +97,24 @@ const EditorPage: React.FC = () => {
   const location = useLocation();
   const {
     generatedHtml,
-    websiteType = "basic",
-    language = "English",
-    theme = "modern",
-    requirements = "basic structure",
+    // websiteType = "basic",
+    // language = "English",
+    // theme = "modern",
+    // requirements = "basic structure",
   } = location.state || { generatedHtml: "<h1>New project</h1>" };
 
-  const mapComponentTypeToTag = (type: string): string => {
-    const map: Record<string, string> = {
-      navbar: "nav",
-      hero: "section",
-      "product-grid": "div",
-      testimonials: "section",
-      footer: "footer",
-      image: "img",
-      video: "video",
-    };
-    return map[type] || "div";
-  };
+  // const mapComponentTypeToTag = (type: string): string => {
+  //   const map: Record<string, string> = {
+  //     navbar: "nav",
+  //     hero: "section",
+  //     "product-grid": "div",
+  //     testimonials: "section",
+  //     footer: "footer",
+  //     image: "img",
+  //     video: "video",
+  //   };
+  //   return map[type] || "div";
+  // };
 
   const handleGenerate = async (textareaValue: string) => {
     const editor = editorRef.current;
@@ -132,9 +132,10 @@ const EditorPage: React.FC = () => {
       button.innerText = "Generating...";
     }
 
+    //@ts-ignore
     const id = selected.getId();
     console.log("Component ID:", id);
-
+    //@ts-ignore
     const selectedHtml = selected.toHTML();
 
     try {
@@ -145,8 +146,10 @@ const EditorPage: React.FC = () => {
         case "updateStyle": {
           let { selector, style } = response.payload;
           const editor = editorRef.current;
-          const wrapper = editor.getWrapper();
-          const wrapperId = wrapper.getId?.();
+
+          const wrapper =  editor ? editor.getWrapper() : null;
+          //@ts-ignore
+          const wrapperId = wrapper?.getId?.();
 
           // Handle wrapper styling
           if (
@@ -155,6 +158,7 @@ const EditorPage: React.FC = () => {
             selector === wrapperId
           ) {
             console.log("Applying style to wrapper");
+            //@ts-ignore
             wrapper.addStyle(style);
             break;
           }
@@ -163,7 +167,7 @@ const EditorPage: React.FC = () => {
           if (!selector.startsWith("#") && !selector.startsWith(".")) {
             selector = `#${selector}`;
           }
-
+          //@ts-ignore
           const matched = wrapper.find(selector)?.[0];
 
           if (!matched) {
@@ -186,7 +190,7 @@ const EditorPage: React.FC = () => {
             alert("No component selected for content update");
             break;
           }
-
+          //@ts-ignore
           target.components(content);
           break;
         }
@@ -202,12 +206,13 @@ const EditorPage: React.FC = () => {
           const selected = editor.getSelected();
           const target = selected || editor.getWrapper();
 
-          // Replace existing component content with editable GrapesJS components
+          //@ts-ignore
           target.components(html);
           break;
         }
 
         case "deleteComponent":
+          //@ts-ignore
           selected.remove();
           break;
         default: {
@@ -314,7 +319,7 @@ const EditorPage: React.FC = () => {
                           color: "white",
                           marginLeft: "10px",
                         },
-                        onClick: ({ editor }) =>
+                        onClick: ({ editor }: { editor: Editor }) =>
                           editor.runCommand("core:preview"),
                       },
                     ],
@@ -366,7 +371,13 @@ const EditorPage: React.FC = () => {
                             placeholder:
                               "Enter text (e.g., 'Change background color to blue')",
                             value: textareaValue,
-                            onChange: ({ value, setState }) => {
+                            onChange: ({
+                              value,
+                              setState,
+                            }: {
+                              value: string;
+                              setState: (state: { value: string }) => void;
+                            }) => {
                               setTextareaValue(value);
                               inputTextRef.current = value;
                               setState({ value });

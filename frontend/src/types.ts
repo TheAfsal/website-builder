@@ -22,9 +22,12 @@ export interface ComponentCollection {
 }
 
 export interface Editor {
+  getSelected(): unknown;
+  getWrapper(): unknown;
   Pages: {
     getAll: () => Page[];
   };
   runCommand: (command: string, options?: any) => any;
   onReady: (callback: () => void) => void;
+  getSelected(): unknown;
 }
