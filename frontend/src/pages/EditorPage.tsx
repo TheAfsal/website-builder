@@ -258,8 +258,7 @@ const EditorPage: React.FC = () => {
           id="gjs-editor"
           style={{ height: "100%", width: "100%" }}
           options={{
-            licenseKey:
-              "0779246a177f4f8c8e5dafb6f3a967028d4e5c974361480cbbf143e340ada0df",
+            licenseKey: import.meta.env.VITE_EDITOR_KEY,
             project: {
               type: "web",
               id: PROJECT_ID,
