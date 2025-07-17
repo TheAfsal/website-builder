@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { X, Sparkles, Palette, Globe, Sun, Moon, Minimize } from "lucide-react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { generateWebsite } from "@/services/builder.api";
 
 interface AIPopupProps {
   onClose: () => void;
@@ -30,48 +31,65 @@ export default function AIPopup({ onClose, onGenerate }: AIPopupProps) {
   const [theme, setTheme] = useState<string>("Light");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  //   const generateWebsiteWithGemini = async () => {
+  //     setIsLoading(true);
+  //     try {
+  //       const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  //       const prompt = `
+  // You are a professional web UI designer helping generate GrapesJS-compatible HTML content.
+
+  // Task:
+  // Generate a complete and editable HTML layout for a "${websiteType}" website using "${theme}" theme and "${language}" as the language. Include these sections if applicable:
+  // - Header with navigation
+  // - Hero section with image and CTA button
+  // - Product or service cards
+  // - Testimonials
+  // - Footer
+
+  // Requirements:
+  // ${requirements || "Basic structure with common UI components"}
+
+  // Rules:
+  // - Return only raw HTML. No Markdown, no CSS blocks, no JavaScript.
+  // - Use semantic HTML5 tags (e.g., <header>, <section>, <footer>)
+  // - Content must be editable in GrapesJS (no hardcoded styles inside <style> tags)
+  // - Use inline styles or TailwindCSS classes (if possible)
+  // - No explanation, return pure HTML only.
+  // `;
+
+  //       console.log(prompt);
+
+  //       const result = await model.generateContent(prompt);
+  //       let generatedHtml = result.response.text().trim();
+
+  //       generatedHtml = generatedHtml
+  //         .replace(/^```html\n([\s\S]*?)\n```$/, "$1")
+  //         .trim();
+  //       console.log("Cleaned HTML:", generatedHtml);
+
+  //       onGenerate(generatedHtml);
+  //     } catch (error) {
+  //       console.error("Error generating website:", error);
+  //       alert(
+  //         "Failed to generate webpage. Please check your API key and try again."
+  //       );
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
   const generateWebsiteWithGemini = async () => {
     setIsLoading(true);
     try {
-      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-      const prompt = `
-You are a professional web UI designer helping generate GrapesJS-compatible HTML content.
-
-Task:
-Generate a complete and editable HTML layout for a "${websiteType}" website using "${theme}" theme and "${language}" as the language. Include these sections if applicable:
-- Header with navigation
-- Hero section with image and CTA button
-- Product or service cards
-- Testimonials
-- Footer
-
-Requirements:
-${requirements || "Basic structure with common UI components"}
-
-Rules:
-- Return only raw HTML. No Markdown, no CSS blocks, no JavaScript.
-- Use semantic HTML5 tags (e.g., <header>, <section>, <footer>)
-- Content must be editable in GrapesJS (no hardcoded styles inside <style> tags)
-- Use inline styles or TailwindCSS classes (if possible)
-- No explanation, return pure HTML only.
-`;
-
-      console.log(prompt);
-
-      const result = await model.generateContent(prompt);
-      let generatedHtml = result.response.text().trim();
-
-      generatedHtml = generatedHtml
-        .replace(/^```html\n([\s\S]*?)\n```$/, "$1")
-        .trim();
-      console.log("Cleaned HTML:", generatedHtml);
-
-      onGenerate(generatedHtml);
+      const { html } = await generateWebsite({
+        websiteType,
+        theme,
+        language,
+        requirements,
+      });
+      onGenerate(html);
     } catch (error) {
-      console.error("Error generating website:", error);
-      alert(
-        "Failed to generate webpage. Please check your API key and try again."
-      );
+      alert("Failed to generate. Try again later.");
     } finally {
       setIsLoading(false);
     }

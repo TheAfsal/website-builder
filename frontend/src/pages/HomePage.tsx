@@ -36,7 +36,10 @@ export default function HomePage() {
     localStorage.clear();
     sessionStorage.clear();
     setIsPopupOpen(false);
-    navigate("/editor", { state: { generatedHtml } });
+    const projectId = crypto.randomUUID(); 
+    navigate(`/editor/${projectId}`, {
+      state: { generatedHtml },
+    });
   };
 
   const openLatest = () => {

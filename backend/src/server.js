@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const { expressjwt: expressJwt } = require("express-jwt");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 dotenv.config();
 
 console.log(process.env.FRONTEND_URL);
@@ -15,6 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
 const JWT_SECRET = process.env.JWT_SECRET || "my_secret";
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
@@ -176,5 +178,106 @@ app.get("/api/projects", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch projects" });
   }
 });
+
+app.post('/api/generate', async (req, res) => {
+  const { inputText, selectedHtml } = req.body;
+
+  try {
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+    const prompt = `
+You are an expert UI assistant for GrapesJS (a web visual editor). Your job is to interpret user instructions and generate a JSON response to manipulate selected components in GrapesJS.
+
+**Rules:**
+- Respond ONLY with JSON. No extra text, markdown, or explanation.
+- The JSON must be valid and follow one of the following actions: "updateStyle", "updateContent", "replaceMedia", "rebuildComponent", "deleteComponent".
+- Use "body" or the actual selected component ID as the selector.
+
+**Format examples:**
+
+{
+  "action": "updateStyle",
+  "payload": {
+    "selector": "body" or "component-id",
+    "style": {
+      "background-color": "pink"
+    }
+  }
+}
+
+{
+  "action": "updateContent",
+  "payload": {
+    "content": "<h1>Updated Title</h1>"
+  }
+}
+
+{
+  "action": "rebuildComponent",
+  "payload": {
+    "html": "<section style='padding:20px; background-color:green;'><h1>Welcome</h1><p>This is editable.</p></section>"
+  }
+}
+
+**User Instruction:**
+"${inputText}"
+
+**Selected Component HTML:**
+${selectedHtml}
+    `.trim();
+
+    const result = await model.generateContent([prompt]);
+    const response = await result.response;
+    const text = response.text();
+
+    const cleanedText = text.replace(/```json|```/g, '').trim();
+    const json = JSON.parse(cleanedText);
+
+    res.status(200).json(json);
+  } catch (err) {
+    console.error("Gemini API error:", err);
+    res.status(500).json({ action: "unknown", payload: {} });
+  }
+});
+
+app.post("/api/generate-website", async (req, res) => {
+  const { websiteType, theme, language, requirements } = req.body;
+
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+  const prompt = `
+You are a professional web UI designer helping generate GrapesJS-compatible HTML content.
+
+Task:
+Generate a complete and editable HTML layout for a "${websiteType}" website using "${theme}" theme and "${language}" as the language. Include these sections if applicable:
+- Header with navigation
+- Hero section with image and CTA button
+- Product or service cards
+- Testimonials
+- Footer
+
+Requirements:
+${requirements || "Basic structure with common UI components"}
+
+Rules:
+- Return only raw HTML. No Markdown, no CSS blocks, no JavaScript.
+- Use semantic HTML5 tags (e.g., <header>, <section>, <footer>)
+- Content must be editable in GrapesJS (no hardcoded styles inside <style> tags)
+- Use inline styles or TailwindCSS classes (if possible)
+- No explanation, return pure HTML only.
+  `;
+
+  try {
+    const result = await model.generateContent([prompt]);
+    let html = result.response.text().trim();
+    html = html.replace(/^```html\n([\s\S]*?)\n```$/, "$1").trim();
+
+    return res.json({ html });
+  } catch (error) {
+    console.error("Gemini generation error:", error);
+    return res.status(500).json({ error: "Generation failed" });
+  }
+});
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

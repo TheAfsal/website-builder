@@ -33,7 +33,7 @@ const ProtectedRoute: React.FC<{ children: JSX.Element }> = ({ children }) => {
   }, [navigate]);
 
   if (isLoading) {
-    return null; // Or render a loading spinner
+    return null;
   }
 
   return user ? children : null;
@@ -53,7 +53,7 @@ const App: React.FC = () => {
           window.location.pathname === "/login" ||
           window.location.pathname === "/register"
         ) {
-          navigate("/"); // Redirect to homepage if authenticated
+          navigate("/"); 
         }
       } catch (error) {
         console.error("Token verification failed:", error);

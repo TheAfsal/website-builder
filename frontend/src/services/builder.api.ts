@@ -31,3 +31,48 @@ export const getMyProjects = async () => {
     return [];
   }
 };
+
+export const callGemini = async (
+  inputText: string,
+  selectedHtml: string
+): Promise<{ action: string; payload: any }> => {
+  try {
+    console.log(inputText, selectedHtml);
+
+    const response = await api.post("/generate", {
+      inputText,
+      selectedHtml,
+    });
+
+    return response.data;
+  } catch (err) {
+    console.error("API call to backend failed:", err);
+    return { action: "unknown", payload: {} };
+  }
+};
+
+export const generateWebsite = async ({
+  websiteType,
+  theme,
+  language,
+  requirements,
+}: {
+  websiteType: string;
+  theme: string;
+  language: string;
+  requirements: string;
+}) => {
+  try {
+    const res = await api.post("/generate-website", {
+      websiteType,
+      theme,
+      language,
+      requirements,
+    });
+
+    return res.data;
+  } catch (error) {
+    console.error("API fetch error:", error);
+    throw error;
+  }
+};
