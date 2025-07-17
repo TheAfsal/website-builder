@@ -5,6 +5,8 @@ import "@grapesjs/studio-sdk/style";
 import type { Editor } from "../types";
 import { callGemini, loadProject, saveProject } from "@/services/builder.api";
 import getOrCreateProjectId from "@/utils/createProjectIs";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 // Call Gemini API
 // const callGemini = async (
@@ -75,18 +77,17 @@ import getOrCreateProjectId from "@/utils/createProjectIs";
 //   }
 // };
 
-
 const EditorPage: React.FC = () => {
   const editorRef = useRef<Editor | null>(null);
   const inputTextRef = useRef("");
   const [textareaValue, setTextareaValue] = useState("");
   const { id } = useParams();
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const location = useLocation();
-  const {
-    generatedHtml,
-    projectId,
-  } = location.state || { generatedHtml: "<h1>New project</h1>" };
+  const { generatedHtml, projectId } = location.state || {
+    generatedHtml: "<h1>New project</h1>",
+  };
 
   const PROJECT_ID = id || projectId || getOrCreateProjectId();
 
@@ -257,14 +258,26 @@ const EditorPage: React.FC = () => {
           id="gjs-editor"
           style={{ height: "100%", width: "100%" }}
           options={{
+            licenseKey:
+              "0779246a177f4f8c8e5dafb6f3a967028d4e5c974361480cbbf143e340ada0df",
+            project: {
+              type: "web",
+              id: PROJECT_ID,
+            },
+            identity: {
+              id: user!.id,
+            },
+            assets: {
+              storageType: "cloud",
+            },
             storage: {
               type: "self",
               autosaveChanges: 5,
-              onSave: async (props:any) => {
+              onSave: async (props: any) => {
                 const { project } = props;
                 await saveToSessionStorage(PROJECT_ID, project);
                 console.log("Project saved", { project });
-              },              
+              },
               onLoad: async () => {
                 const project = await loadFromSessionStorage(PROJECT_ID);
                 return {
