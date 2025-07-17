@@ -265,26 +265,23 @@ const EditorPage: React.FC = () => {
           options={{
             licenseKey:
               "0779246a177f4f8c8e5dafb6f3a967028d4e5c974361480cbbf143e340ada0df",
+            project: {
+              type: "web",
+              // TODO: replace with a unique id for your projects. e.g. an uuid
+              id: "UNIQUE_PROJECT_ID",
+            },
+            identity: {
+              // TODO: replace with a unique id for your end users. e.g. an uuid
+              id: "UNIQUE_END_USER_ID",
+            },
+            assets: {
+              storageType: "cloud",
+            },
             storage: {
               type: "cloud",
-              autosaveChanges: 5,
-              onSave: async (project: any) => {
-                await saveToSessionStorage(PROJECT_ID, project);
-                console.log("Project saved", { project });
-              },
-              onLoad: async () => {
-                const project = await loadFromSessionStorage(PROJECT_ID);
-                return {
-                  project: project || {
-                    pages: [{ name: "Home", component: generatedHtml }],
-                  },
-                };
-              },
-              identity: {
-                id: "UNIQUE_END_USER_ID",
-              },
+              autosaveChanges: 100,
+              autosaveIntervalMs: 10000,
             },
-            project: { type: "web", id: "UNIQUE_PROJECT_ID" },
             layout: {
               default: {
                 type: "column",
