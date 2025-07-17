@@ -144,7 +144,8 @@ const EditorPage: React.FC = () => {
 
       switch (response.action) {
         case "updateStyle": {
-          let { selector, style } = response.payload;
+          let { selector } = response.payload;
+          const { style  } = response.payload;
           const editor = editorRef.current;
 
           const wrapper = editor ? editor.getWrapper() : null;
