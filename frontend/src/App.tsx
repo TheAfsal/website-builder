@@ -53,16 +53,16 @@ const App: React.FC = () => {
           window.location.pathname === "/login" ||
           window.location.pathname === "/register"
         ) {
-          navigate("/"); 
+          navigate("/");
         }
       } catch (error) {
         console.error("Token verification failed:", error);
-        if (
-          window.location.pathname !== "/login" &&
-          window.location.pathname !== "/register"
-        ) {
-          navigate("/login");
-        }
+        // if (
+        //   window.location.pathname !== "/login" &&
+        //   window.location.pathname !== "/register"
+        // ) {
+        //   navigate("/login");
+        // }
       } finally {
         setIsAuthChecked(true);
       }
@@ -71,7 +71,7 @@ const App: React.FC = () => {
   }, [dispatch, navigate]);
 
   if (!isAuthChecked) {
-    return null; // Or render a loading spinner
+    return null;
   }
 
   return (
@@ -81,9 +81,7 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
               <HomePage />
-            </ProtectedRoute>
           }
         />
         <Route

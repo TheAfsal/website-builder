@@ -7,9 +7,12 @@ import Footer from "@/components/layout/Footer";
 import AIPopup from "@/components/AIPopup";
 import { useNavigate } from "react-router-dom";
 import { getMyProjects } from "@/services/builder.api";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 export default function HomePage() {
   const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
+  const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
 
@@ -36,12 +39,12 @@ export default function HomePage() {
     localStorage.clear();
     sessionStorage.clear();
     setIsPopupOpen(false);
-    const projectId = crypto.randomUUID(); 
+    const projectId = crypto.randomUUID();
     navigate(`/editor/${projectId}`, {
       state: { generatedHtml },
     });
   };
-  
+
   return (
     <div className="min-h-screen">
       <motion.main
@@ -50,7 +53,10 @@ export default function HomePage() {
         transition={{ duration: 0.8 }}
       >
         <Hero
-          onCreateClick={() => setIsPopupOpen(true)}
+          onCreateClick={() => {
+            if (!user) return navigate("/login");
+            setIsPopupOpen(true);
+          }}
         />
 
         <PastWebsites websites={projects} />

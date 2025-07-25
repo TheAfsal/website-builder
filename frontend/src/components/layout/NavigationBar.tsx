@@ -8,15 +8,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Menu, X, Sparkles, LogOut } from "lucide-react";
+import { Menu, X, Sparkles, LogOut, LogIn } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { logout } from "@/store/slices/authSlice";
 import { logoutUser } from "@/services/user.api";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,6 +33,10 @@ export default function Navigation() {
   const handleLogout = async () => {
     await logoutUser();
     dispatch(logout());
+    navigate("/login");
+  };
+
+  const handleLogin = async () => {
     navigate("/login");
   };
 
@@ -87,36 +93,46 @@ export default function Navigation() {
             </a>
           </div>
 
-          {/* User Profile */}
-          <div className="hidden md:flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-10 w-10 rounded-full"
-                >
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src="/placeholder.svg?height=40&width=40"
-                      alt="John Doe"
-                    />
-                    <AvatarFallback>JD</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <div className="flex flex-col space-y-1 p-2">
-                  <p className="text-sm font-medium leading-none">
-                    Account Info
-                  </p>
-                </div>
-                <DropdownMenuItem onClick={handleLogout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {user ? (
+            <div className="hidden md:flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="relative h-10 w-10 rounded-full"
+                  >
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage
+                        src="/placeholder.svg?height=40&width=40"
+                        alt="John Doe"
+                      />
+                      <AvatarFallback>JD</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <div className="flex flex-col space-y-1 p-2">
+                    <p className="text-sm font-medium leading-none">
+                      Account Info
+                    </p>
+                  </div>
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <button
+              onClick={handleLogin}
+              type="button"
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r bg-violet-600 to-purple-600 text-white text-sm font-medium rounded-md shadow-md hover:from-violet-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-violet-400 transition-all duration-200"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              <span>Log in</span>
+            </button>
+          )}
 
           {/* Mobile Menu Button */}
           <Button

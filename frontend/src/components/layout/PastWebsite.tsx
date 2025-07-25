@@ -10,6 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 interface Website {
   id: number;
@@ -25,7 +27,7 @@ interface PastWebsitesProps {
 }
 
 export default function PastWebsites({ websites }: PastWebsitesProps) {
-  console.log(websites);
+  const { user } = useSelector((state: RootState) => state.auth);
 
   const navigate = useNavigate();
   const containerVariants = {
@@ -56,10 +58,23 @@ export default function PastWebsites({ websites }: PastWebsitesProps) {
           <h2 className="text-4xl font-bold text-slate-900 mb-4">
             Your Creative Journey
           </h2>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Track your website creations and manage your digital portfolio with
-            ease
-          </p>
+          {!user ? (
+            <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto text-center mt-4">
+              Already started your journey?{" "}
+              <span
+                className="text-violet-600 font-semibold"
+                onClick={() => navigate("/login")}
+              >
+                Log in
+              </span>{" "}
+              to pick up where you left off.
+            </p>
+          ) : (
+            <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+              Track your website creations and manage your digital portfolio
+              with ease
+            </p>
+          )}
         </motion.div>
 
         <motion.div
